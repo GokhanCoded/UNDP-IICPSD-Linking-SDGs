@@ -1,0 +1,122 @@
+import pandas as pd
+pd.options.mode.chained_assignment = None  # default='warn'
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set(style="whitegrid", color_codes=True)
+
+
+#First, we import the three schemes respectively:
+#import first sheet: SDG Goals
+sdg = pd.read_excel('sdg.xlsx', header=None, encoding='latin', skip_blank_lines=False)
+sdg.fillna(0, inplace=True)
+sdg = sdg.where(sdg != "x", 1)
+
+#import second sheet: SDG Targets
+target = pd.read_excel('Target.xlsx', header=None, encoding='latin',skip_blank_lines=False)
+target.fillna(0, inplace=True)
+target = target.where(target != "x", 1)
+
+#import third sheet: SDG Indicators
+indicator = pd.read_excel('Indicator.xlsx', header=None, encoding='latin', skip_blank_lines=False)
+indicator.fillna(0, inplace=True)
+indicator = indicator.where(indicator != "x", 1)
+
+# SDG Goals and keywords: return and convert arrays to proper strings
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
+
+keys = sdg.iloc[0,2:1316]
+keys = keys.astype(str)
+keys = keys.reset_index()
+keys = keys.drop(['index'], axis=1)
+
+goals = sdg.iloc[1:18,1]
+goals = goals.astype(str)
+goals = goals.reset_index()
+goals = goals.drop(['index'], axis=1)
+
+#save original arrays to pickles. (just to be safe)
+# import pickle
+# pickle_out = open("dict.pickleA","wb")
+# pickle.dump(goals, pickle_out)
+# pickle_out.close()
+#
+# pickle_out = open("dict.pickleB","wb")
+# pickle.dump(keys, pickle_out)
+# pickle_out.close()
+
+#apply mapping function to obtain binary decision matrix whether keyword is part of SDG Goals
+goals.columns = ['SDG']
+res = []
+for a in goals['SDG']:
+    res.append(keys.applymap(lambda x: x in a))
+
+sdg_mapped = pd.concat(res, axis=1).T
+sdg_mapped.index = np.arange(len(sdg_mapped))
+sdg_mapped = goals.join(sdg_mapped)
+
+# SDG Target and keywords: return and convert arrays to proper strings
+target_des = target.iloc[1:170,2]
+target_des = target_des.astype(str)
+target_des = target_des.reset_index()
+target_des = target_des.drop(['index'], axis=1)
+
+#apply mapping function to obtain binary decision matrix whether keyword is part of SDG Targets
+target_des.columns = ['target']
+res = []
+for a in target_des['target']:
+    res.append(keys.applymap(lambda x: x in a))
+
+target_mapped = pd.concat(res, axis=1).T
+target_mapped.index = np.arange(len(target_mapped))
+target_mapped = target_des.join(target_mapped)
+
+# SDG Indicator and keywords: return and convert arrays to proper strings
+indicator_des = indicator.iloc[1:245,3]
+indicator_des = indicator_des.astype(str)
+indicator_des = indicator_des.reset_index()
+indicator_des = indicator_des.drop(['index'], axis=1)
+
+#apply mapping function to obtain binary decision matrix whether keyword is part of SDG Indicators
+indicator_des.columns = ['indicator']
+res = []
+for a in indicator_des['indicator']:
+    res.append(keys.applymap(lambda x: x in a))
+
+indicator_mapped = pd.concat(res, axis=1).T
+indicator_mapped.index = np.arange(len(indicator_mapped))
+indicator_mapped = indicator_des.join(indicator_mapped)
+
+#calculate Hit rate as share of True out of False
+false = sdg_mapped[sdg_mapped==False].count()
+true = sdg_mapped[sdg_mapped==True].count()
+SDG_Goals_Hit_rate = true.sum()/float(false.sum())
+print "hit rate SDG_goals: 0.4%"
+print SDG_Goals_Hit_rate
+
+false = target_mapped[target_mapped==False].count()
+true = target_mapped[target_mapped==True].count()
+SDG_Targets_Hit_rate = true.sum()/float(false.sum())
+print "hit rate SDG_Targets: 0.9%"
+print SDG_Targets_Hit_rate
+
+false = indicator_mapped[indicator_mapped==False].count()
+true = indicator_mapped[indicator_mapped==True].count()
+SDG_Indicator_Hit_rate = true.sum()/float(false.sum())
+print "hit rate SDG_Indicators: 0.5%"
+print SDG_Indicator_Hit_rate
+
+#compare mapping function with excel entries:
+sdg_mapped['sum_python'] = sdg_mapped.sum(axis=1)
+compare1 = sdg_mapped['sum_python'].copy()
+del sdg[1]
+del sdg[0]
+sdg['sum_excel'] = sdg.sum(axis=1)
+compare2 = sdg['sum_excel'].copy()
+compare2 = compare2.drop([0], axis=0)
+compare2 = compare2.reset_index()
+compare2 = compare2.drop(['index'], axis=1)
+frames = [compare1, compare2]
+compare = pd.concat(frames, axis=1)
