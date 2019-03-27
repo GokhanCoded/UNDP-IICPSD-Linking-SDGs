@@ -120,3 +120,8 @@ compare2 = compare2.reset_index()
 compare2 = compare2.drop(['index'], axis=1)
 frames = [compare1, compare2]
 compare = pd.concat(frames, axis=1)
+print compare
+print "Mapping Function shows more appearances than excel sheet indicated"
+
+#identify most mentioned goal/target/indicator/overall according to keywords
+#GOALS
