@@ -11,16 +11,19 @@ sns.set(style="whitegrid", color_codes=True)
 sdg = pd.read_excel('sdg.xlsx', header=None, encoding='latin', skip_blank_lines=False)
 sdg.fillna(0, inplace=True)
 sdg = sdg.where(sdg != "x", 1)
+sdg = sdg.where(sdg != "X", 1)
 
 #import second sheet: SDG Targets
 target = pd.read_excel('Target.xlsx', header=None, encoding='latin',skip_blank_lines=False)
 target.fillna(0, inplace=True)
 target = target.where(target != "x", 1)
+target = target.where(target != "X", 1)
 
 #import third sheet: SDG Indicators
 indicator = pd.read_excel('Indicator.xlsx', header=None, encoding='latin', skip_blank_lines=False)
 indicator.fillna(0, inplace=True)
 indicator = indicator.where(indicator != "x", 1)
+indicator = indicator.where(indicator != "X", 1)
 
 # SDG Goals and keywords: return and convert arrays to proper strings
 import sys
@@ -108,20 +111,51 @@ SDG_Indicator_Hit_rate = true.sum()/float(false.sum())
 print "hit rate SDG_Indicators: 0.5%"
 print SDG_Indicator_Hit_rate
 
-#compare mapping function with excel entries:
+#compare mapping function with excel entries and identify most mentioned goal/target/indicator/overall according to keywords
+#GOALS
 sdg_mapped['sum_python'] = sdg_mapped.sum(axis=1)
-compare1 = sdg_mapped['sum_python'].copy()
-del sdg[1]
+compare1 = sdg_mapped[['SDG','sum_python']].copy()
 del sdg[0]
+del sdg[1]
 sdg['sum_excel'] = sdg.sum(axis=1)
 compare2 = sdg['sum_excel'].copy()
 compare2 = compare2.drop([0], axis=0)
 compare2 = compare2.reset_index()
 compare2 = compare2.drop(['index'], axis=1)
 frames = [compare1, compare2]
-compare = pd.concat(frames, axis=1)
-print compare
-print "Mapping Function shows more appearances than excel sheet indicated"
+goals_total = pd.concat(frames, axis=1)
+print goals_total[['sum_python','sum_excel']]
+print "Mapping Function for Goals/Targets and Indicators shows more appearances than excel sheet indicated"
 
-#identify most mentioned goal/target/indicator/overall according to keywords
-#GOALS
+#Targets
+target_mapped['sum_python'] = target_mapped.sum(axis=1)
+compare3 = target_mapped[['target','sum_python']].copy()
+del target[0]
+del target[1]
+del target[2]
+target['sum_excel'] = target.sum(axis=1)
+compare4 = target['sum_excel'].copy()
+compare4 = compare4.drop([0], axis=0)
+compare4 = compare4.reset_index()
+compare4 = compare4.drop(['index'], axis=1)
+frames = [compare3, compare4]
+targets_total = pd.concat(frames, axis=1)
+print targets_total[['sum_python','sum_excel']]
+
+#Indicators
+indicator_mapped['sum_python'] = indicator_mapped.sum(axis=1)
+compare5 = indicator_mapped[['indicator','sum_python']].copy()
+del indicator[0]
+del indicator[1]
+del indicator[2]
+del indicator[3]
+indicator['sum_excel'] = indicator.sum(axis=1)
+compare6 = indicator['sum_excel'].copy()
+compare6 = compare6.drop([0], axis=0)
+compare6 = compare6.reset_index()
+compare6 = compare6.drop(['index'], axis=1)
+frames = [compare5, compare6]
+indicators_total = pd.concat(frames, axis=1)
+print indicators_total[['sum_python','sum_excel']]
+
+print "Mapping Function for Goals/Targets and Indicators shows more appearances than excel sheet indicated"
