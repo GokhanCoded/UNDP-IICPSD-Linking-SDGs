@@ -161,6 +161,8 @@ print indicators_total[['sum_python','sum_excel']]
 #Summary Matches and Comparison to Excel Sheet
 print "Mapping Function for Goals/Targets/Indicators shows overall more appearances than excel sheet indicates"
 print "Top 3 Goals with keywords Matches: SDG 8 (11 matches), 14 (10 matches), 15 (10 matches)"
-print "Top 5 Targets with keywords Matches: Target 1.4 (25 matches), 2.3 (31 ma.), 2.4 (25 ma., 6.a (23 ma.), 11.b (27 ma.)"
-print "Top 5 Indicators: 1.3.1 (19 ma.), 3.81. (18 ma.), 4.7.1 (21 ma.), 7.b.1 (18 ma.), 11.4.1 (18 ma.), 12.8.1 (19 ma.), 13.b.1 (20 ma.)R"
+print "Top 5 individual Targets with keywords Matches: Target 1.4 (25 matches), 2.3 (31 ma.), 2.4 (25 ma., 6.a (23 ma.), 11.b (27 ma.)"
+print "Top indivual Indicators: 1.3.1 (19 ma.), 3.81. (18 ma.), 4.7.1 (21 ma.), 7.b.1 (18 ma.), 11.4.1 (18 ma.), 12.8.1 (19 ma.), 13.b.1 (20 ma.)R"
 
+print "Goal 1 has 1 match for itself, 85 matches for its targets and 115 matches for its indicators. How weight? Weight at all? I need df that assigns goals properly!"
+print "If Goal 1 has accumulated 201 matches, is it more or less worth than 300 matches for goal 2 with differen keywords, do I have to weight keywords?"
