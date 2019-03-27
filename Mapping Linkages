@@ -35,7 +35,7 @@ keys = keys.astype(str)
 keys = keys.reset_index()
 keys = keys.drop(['index'], axis=1)
 
-goals = sdg.iloc[1:18,1]
+goals = sdg.iloc[1:18,0:2]
 goals = goals.astype(str)
 goals = goals.reset_index()
 goals = goals.drop(['index'], axis=1)
@@ -51,7 +51,8 @@ goals = goals.drop(['index'], axis=1)
 # pickle_out.close()
 
 #apply mapping function to obtain binary decision matrix whether keyword is part of SDG Goals
-goals.columns = ['SDG']
+
+goals.columns = ['Goal','SDG']
 res = []
 for a in goals['SDG']:
     res.append(keys.applymap(lambda x: x in a))
@@ -61,13 +62,13 @@ sdg_mapped.index = np.arange(len(sdg_mapped))
 sdg_mapped = goals.join(sdg_mapped)
 
 # SDG Target and keywords: return and convert arrays to proper strings
-target_des = target.iloc[1:170,2]
+target_des = target.iloc[1:170,0:3]
 target_des = target_des.astype(str)
 target_des = target_des.reset_index()
 target_des = target_des.drop(['index'], axis=1)
 
 #apply mapping function to obtain binary decision matrix whether keyword is part of SDG Targets
-target_des.columns = ['target']
+target_des.columns = ['Goal','target_no','target']
 res = []
 for a in target_des['target']:
     res.append(keys.applymap(lambda x: x in a))
@@ -77,13 +78,13 @@ target_mapped.index = np.arange(len(target_mapped))
 target_mapped = target_des.join(target_mapped)
 
 # SDG Indicator and keywords: return and convert arrays to proper strings
-indicator_des = indicator.iloc[1:245,3]
+indicator_des = indicator.iloc[1:245,0:4]
 indicator_des = indicator_des.astype(str)
 indicator_des = indicator_des.reset_index()
 indicator_des = indicator_des.drop(['index'], axis=1)
 
 #apply mapping function to obtain binary decision matrix whether keyword is part of SDG Indicators
-indicator_des.columns = ['indicator']
+indicator_des.columns = ['Goal', 'target_no', 'indicator_no', 'indicator']
 res = []
 for a in indicator_des['indicator']:
     res.append(keys.applymap(lambda x: x in a))
@@ -114,7 +115,7 @@ print SDG_Indicator_Hit_rate
 #compare mapping function with excel entries and identify most mentioned goal/target/indicator/overall according to keywords
 #GOALS
 sdg_mapped['sum_python'] = sdg_mapped.sum(axis=1)
-compare1 = sdg_mapped[['SDG','sum_python']].copy()
+compare1 = sdg_mapped[['Goal','SDG','sum_python']].copy()
 del sdg[0]
 del sdg[1]
 sdg['sum_excel'] = sdg.sum(axis=1)
@@ -129,7 +130,7 @@ print "Mapping Function for Goals/Targets and Indicators shows more appearances 
 
 #Targets
 target_mapped['sum_python'] = target_mapped.sum(axis=1)
-compare3 = target_mapped[['target','sum_python']].copy()
+compare3 = target_mapped[['Goal', 'target_no','target','sum_python']].copy()
 del target[0]
 del target[1]
 del target[2]
@@ -144,7 +145,7 @@ print targets_total[['sum_python','sum_excel']]
 
 #Indicators
 indicator_mapped['sum_python'] = indicator_mapped.sum(axis=1)
-compare5 = indicator_mapped[['indicator','sum_python']].copy()
+compare5 = indicator_mapped[['Goal', 'target_no', 'indicator_no', 'indicator','sum_python']].copy()
 del indicator[0]
 del indicator[1]
 del indicator[2]
