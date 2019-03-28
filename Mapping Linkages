@@ -187,7 +187,7 @@ sdg_mapped['Goal'] = sdg_mapped['Goal'].astype(float)
 target_mapped['Goal'] = target_mapped['Goal'].astype(float)
 indicator_mapped['Goal'] = indicator_mapped['Goal'].astype(float)
 target_mapped['sum_by_goal'] = target_mapped['Goal'].apply(lambda x:  target_mapped[target_mapped['Goal'] == x]['sum_python'].sum())
-indicator_mapped['sum_by_goal'] = indicator_mapped['Goal'].apply(lambda x:  indicator_mapped[indicator_mapped['Goal'] == x]['sum_python'].sum())
+indicator_mapped['sum_by_goal2'] = indicator_mapped['Goal'].apply(lambda x:  indicator_mapped[indicator_mapped['Goal'] == x]['sum_python'].sum())
 
 #Top Keywords Goals/targets/indicator Add row that show sums of each column.
 sum = sdg_mapped.iloc[:, 3:-1].sum()
@@ -208,3 +208,21 @@ print "Top keywords Indicators:",indicator_mapped.T[244].sort_values(ascending=F
 
 print "One problem is that we have to define what 'keyword in Goal/Indicator/Target' really means. " \
       "For instance,  I had many 'men' being part of 'government'. However it is obviously not about men."
+
+sum_goals = sdg_mapped[['Goal','sum_python']]
+sum_targets = target_mapped[['Goal','sum_by_goal']]
+sum_indicators = indicator_mapped[['Goal','sum_by_goal2']]
+sum_goals = sum_goals.drop(sum_goals.index[17])
+sum_targets = sum_targets.drop(sum_targets.index[169])
+sum_indicators = sum_indicators.drop(sum_indicators.index[244])
+
+overall = sum_goals.merge(sum_targets, how="left")
+overall = overall.merge(sum_indicators, how="left")
+overall = overall[~overall.Goal.duplicated(keep='first')]
+overall = overall.reset_index()
+overall = overall.drop(['index'], axis=1)
+
+overall['total'] = overall.iloc[:, 1:].sum(axis=1)
+
+print "total matches per Goal chronologically", overall['total']
+
