@@ -195,7 +195,6 @@ sdg_mapped = sdg_mapped.append(sum, ignore_index=True)
 sdg_mapped= sdg_mapped.replace('nan', 0).fillna(0)
 print "Top keywords Goals:", sdg_mapped.T[17].sort_values(ascending=False).iloc[:10]
 
-
 sum = target_mapped.iloc[:, 4:-2].sum()
 target_mapped = target_mapped.append(sum, ignore_index=True)
 target_mapped= target_mapped.replace('nan', 0).fillna(0)
@@ -209,6 +208,7 @@ print "Top keywords Indicators:",indicator_mapped.T[244].sort_values(ascending=F
 print "One problem is that we have to define what 'keyword in Goal/Indicator/Target' really means. " \
       "For instance,  I had many 'men' being part of 'government'. However it is obviously not about men."
 
+#Overall top matches Goals+targets*Indicator
 sum_goals = sdg_mapped[['Goal','sum_python']]
 sum_targets = target_mapped[['Goal','sum_by_goal']]
 sum_indicators = indicator_mapped[['Goal','sum_by_goal2']]
@@ -225,4 +225,25 @@ overall = overall.drop(['index'], axis=1)
 overall['total'] = overall.iloc[:, 1:].sum(axis=1)
 
 print "total matches per Goal chronologically", overall['total']
+
+#Overall key words Goals+targets+indicators
+key_goals = sdg_mapped.iloc[17:]
+key_targets = target_mapped.iloc[169:]
+key_indicators = indicator_mapped.iloc[244:]
+
+overall_keys = key_goals.append(key_targets)
+overall_keys = overall_keys.append(key_indicators)
+overall_keys = overall_keys.reset_index()
+overall_keys = overall_keys.drop(['index'], axis=1)
+
+sum = overall_keys.iloc[:,:].sum()
+overall_keys = overall_keys.append(sum, ignore_index=True)
+print "Top Overall Keywords:",overall_keys.T[3].sort_values(ascending=False).iloc[:10]
+
+
+
+
+
+
+
 
