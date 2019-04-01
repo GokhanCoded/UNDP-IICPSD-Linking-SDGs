@@ -141,7 +141,7 @@ indicator_mapped = indicator_des.join(indicator_mapped)
 indicator_mapped.columns = indicator.iloc[0]
 indicator = indicator.reindex(indicator.index.drop(0))
 
-#calculate Hit rate as share of True out of False
+#calculate Hit rate as share of True out of Total
 false = sdg_mapped[sdg_mapped==False].count()
 true = sdg_mapped[sdg_mapped==True].count()
 total = true.sum() + false.sum()
